@@ -1,0 +1,82 @@
+---
+title: "built_in_dataset_exploration"
+author: "Joshua Paul Cohen"
+format: html
+---
+
+
+```{r}
+library(tidyverse)
+
+co2_clean <- CO2 %>% janitor::clean_names()
+```
+
+```{r}
+co2_clean %>%
+  pivot_longer(
+      everything(), 
+      names_to = "column", 
+      values_to = "value", 
+      values_transform = list(value = as.character)
+    ) %>% 
+  count(column, value) %>% 
+  rename(count = n)
+```
+
+
+```{r}
+CO2
+```
+
+
+```{r}
+co2_clean %>% 
+  group_by(plant) %>% 
+  summarize(
+    conc = median(conc), 
+    uptake = median(uptake), 
+    type = type, 
+    treatment = treatment
+    ) %>% 
+  mutate(
+    plant = substring(plant, 3)
+  ) %>% 
+  # add_row(plant = "", .before = 7) %>% 
+  ggplot(aes(plant, uptake, fill = treatment)) + 
+  geom_bar(position = "dodge", stat = "identity") + 
+  facet_wrap(vars(type)) + 
+  labs(title = "Average Cold Treatment Effects on CO2 Uptake in *Echinochloa crus-galli*", fill = "Treatment: ") + 
+  # scale_fill_discrete(treatment, type = "viridis") + 
+  theme(legend.position = "bottom", title = ggtext::element_markdown())
+```
+
+```{r}
+co2_clean %>% 
+  group_by(plant) %>% 
+  summarize(
+    conc = median(conc), 
+    uptake = median(uptake), 
+    type = type, 
+    treatment = treatment
+  ) %>% 
+  mutate(
+    plant = substring(plant, 3)
+  )
+```
+
+this one is the time series
+
+```{r}
+co2 %>% 
+  data.frame(
+    co2_ppm = ., 
+    date = seq(ymd('1959-01-01'), ymd('1997-12-31'), by='1 month')
+    ) %>% 
+  
+  
+ggplot(aes(date, co2_ppm)) + 
+  geom_line() + 
+  
+  scale_x_date(date_breaks = "5 years", date_labels = "%Y")
+```
+
