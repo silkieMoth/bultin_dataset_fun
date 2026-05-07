@@ -75,8 +75,21 @@ co2 %>%
   
   
 ggplot(aes(date, co2_ppm)) + 
-  geom_line() + 
   
-  scale_x_date(date_breaks = "5 years", date_labels = "%Y")
+  geom_line() + 
+  geom_smooth(method = lm) + 
+  
+  labs(
+    title = "Mauna Loa Atmospheric CO2 Concentration (1959-1997)", 
+    y = expression("CO"[2]~"Conc. (ppm)")
+    ) +
+  
+  scale_x_date(date_breaks = "5 years", date_labels = "%Y") + 
+  
+  theme_minimal() + 
+  theme(
+    axis.title.x = element_blank(), 
+    plot.title = element_text(hjust = 0.5)
+    )
 ```
 
